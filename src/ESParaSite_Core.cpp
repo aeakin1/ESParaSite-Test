@@ -55,7 +55,6 @@ Adafruit_SI1145 uv = Adafruit_SI1145();
 BlueDot_BME280 bme;
 RtcDS3231<TwoWire> Rtc(Wire);
 EepromAt24c32<TwoWire> RtcEeprom(Wire);
-ESParaSite esps;
 
 ESParaSite::printchamber chamber_resource;
 ESParaSite::optics optics_resource;
