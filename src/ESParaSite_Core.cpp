@@ -203,7 +203,7 @@ void get_enclosure() {
 }
 
 void setup(void) {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("");
 
   if (init_wifi() == WL_CONNECTED) {
