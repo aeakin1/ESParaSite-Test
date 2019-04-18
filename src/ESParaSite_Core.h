@@ -1,6 +1,6 @@
 //ESParaSite_Core.h
 
-/* ESParaSite Data Logger v0.3
+/* ESParaSite Data Logger v0.2
 	Authors: Andy (DocMadmag) Eakin
 
 	Please see /ATTRIB for full credits and OSS License Info
@@ -14,37 +14,19 @@
 
 #pragma once
 
-class ESParaSite;
+class ESParaSite  {
+ public:
 
 void get_chamber ();
 void get_optics ();
 void get_ambient();
 void get_enclosure();
 
-void init_dht_sensor();
-void init_bme_sensor();
-void init_rtc_clock();
-
-void read_rtc_data ();
-void read_dht_sensor();
-void read_si_sensor();
-void read_mlx_sensor();
-void read_bme_sensor();
-
-int convertCtoF(int temp_c);
-void printDateTime(const RtcDateTime & dt);
-void create_timestamp(const RtcDateTime & dt);
-
-
-
-class ESParaSite  
-{
-public:
 struct printchamber {
   float dht_temp_c{ 0 };
   float dht_humidity{ 0 };
   float dht_dewpoint{ 0 };
-};
+} chamber_resource;
 
 struct optics {
   float si_uvindex{ 0 };
@@ -52,22 +34,21 @@ struct optics {
   float si_infrared{ 0 };
   float mlx_amb_temp_c{ 0 };
   float mlx_obj_temp_c{ 0 };
-};
+} optics_resource;
 
 struct ambient {
   float bme_temp_c{ 0 };
   float bme_humidity{ 0 };
   float bme_barometer{ 0 };
   float bme_altitude{ 0 };
-};
+} ambient_resource;
 
 struct enclosure {
   float case_temp{ 0 };
   float total_sec{ 0 };
   float screen_sec{ 0 };
   float led_sec{ 0 };
-};
+} enclosure_resource;
 
 
 };
-

@@ -1,6 +1,4 @@
-//ESParaSite_Core.cpp
-
-/* ESParasite Data Logger v0.3
+/* ESParasite Data Logger v0.2
 	Authors: Andy (DocMadmag) Eakin
 
 	Please see /ATTRIB for full credits and OSS License Info
@@ -27,13 +25,12 @@
 #include <RtcTemperature.h>
 #include <RtcUtility.h>
 #include <BlueDot_BME280.h>
-#include <ESParaSite_Core.h>
+#include "ESParaSite_Core.h"
 
 //+++ User Settings +++
 const char* wifi_ssid     = "yourwifinetwork";
 const char* wifi_password = "yourwifipassword";
 
-using namespace std;
 
 //+++ Advanced Settings +++
 // For precise altitude measurements please put in the current pressure corrected for the sea level
@@ -50,18 +47,16 @@ using namespace std;
 //int bme_i2c_address = 0x77;
 int bme_i2c_address = 0x76;
 
+
 //Initialize Libraries
 ESP8266WebServer http_rest_server(HTTP_REST_PORT);
+DHT12 dht12;
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 Adafruit_SI1145 uv = Adafruit_SI1145();
 BlueDot_BME280 bme;
 RtcDS3231<TwoWire> Rtc(Wire);
 EepromAt24c32<TwoWire> RtcEeprom(Wire);
-
-ESParaSite::printchamber chamber_resource;
-ESParaSite::optics optics_resource;
-ESParaSite::ambient ambient_resource;
-ESParaSite::enclosure enclosure_resource;
+ESParaSite_Core esps;
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 unsigned long delayTime;
@@ -205,7 +200,7 @@ void get_enclosure() {
 }
 
 void setup(void) {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("");
 
   if (init_wifi() == WL_CONNECTED) {
@@ -220,10 +215,14 @@ void setup(void) {
     Serial.println(wifi_ssid);
   }
 
+  init_chamber_resource();
+  init_optics_resource();
+  init_ambient_resource();
+  init_enclosure_resource();
   config_rest_server_routing();
 
   Serial.println("");
-  Serial.println("ESParaSite Data Logging Server");
+  Serial.println("ESParasite Data Logging Server");
   Serial.print("Compiled: ");
   Serial.print(__DATE__);
   Serial.print(" ");
@@ -302,6 +301,36 @@ void setup(void) {
 
 void  init_dht_sensor() {
   // initialize DHT12 temperature sensor
+  unsigned long b = micros();
+  dht::ReadStatus chk = DHT.read();
+  unsigned long e = micros();
+
+  Serial.print(F("Read DHT12 sensor: "));
+  switch (chk)
+  {
+    case dht::OK:
+      Serial.print(F("OK, took "));
+      Serial.print (e - b); Serial.print(F(" usec, "));
+      break;
+    case dht::ERROR_CHECKSUM:
+      Serial.println(F("Checksum error"));
+      break;
+    case dht::ERROR_TIMEOUT:
+      Serial.println(F("Timeout error"));
+      break;
+    case dht::ERROR_CONNECT:
+      Serial.println(F("Connect error"));
+      break;
+    case dht::ERROR_ACK_L:
+      Serial.println(F("AckL error"));
+      break;
+    case dht::ERROR_ACK_H:
+      Serial.println(F("AckH error"));
+      break;
+    default:
+      Serial.println(F("Unknown error"));
+      break;
+  }
 }
 
 void init_bme_sensor() {
@@ -409,8 +438,12 @@ void read_dht_sensor() {
   Serial.println("===================");
 
   //First DHT measurement is stale, so we measure, wait ~2 seconds, then measure again.
+  DHT.getTemperature();
+  DHT.getHumidity();
+  DHT.dewPoint();
+
   delay(2500);
-/*
+
   Serial.print(F("Temperature (°C): "));
   chamber_resource.dht_temp_c = ((float)DHT.getTemperature() / (float)10);
   Serial.println(((int)chamber_resource.dht_temp_c));
@@ -424,7 +457,7 @@ void read_dht_sensor() {
   chamber_resource.dht_dewpoint = ((float)DHT.dewPoint());
   Serial.println(((int)chamber_resource.dht_dewpoint));
 
-  */
+  delay(1000);
 }
 
 void read_si_sensor() {

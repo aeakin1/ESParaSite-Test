@@ -1,6 +1,6 @@
 //ESParasite VERSION HISTORY
 
-/* ESParasite Data Logger v0.3
+/* ESParasite Data Logger v0.1
 	Authors: Andy (DocMadmag) Eakin
 	
 	Please see /ATTRIB for full credits and OSS License Info
@@ -13,13 +13,7 @@
 */
 
 /*
-v0.3 - Third Release - Crabs - 2019-04-07
-	- Removed DHT12 Support, temporarily, while I find a better library.
-	- Migrated to Platform.IO for substantially better development experience.
-		- Required refactoring code to make it fully C++ complaint. (I'm a Real Boy!)
-
-/*
-v0.2 - Second Release - Bed Bugs - 2019-04-07
+v0.2 - Second Release - Bed Bugs- 2019-04-07
 	- Adds support for the BME280 Sensor (For Ambient Temperature, Temperature, Humidity and Altitude.)
 	- Nearly all code has been refactored! (I just love saying that) Since we are relying on 3rd party open source libraries, 
 		each one is a bit different in how it behaves. Refactoring has prioritized standardization across the main functions 
@@ -50,4 +44,3 @@ v0.1 - Initial release! - Amebiasis - 2019-04-03
 		- SI1145 UV index is available by querying http://<ipaddress>/uvledStatus
 	-Lots left to do!
 */
-
